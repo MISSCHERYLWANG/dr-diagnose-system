@@ -1,0 +1,153 @@
+
+{% extends 'layouts/base.html' %}
+
+{% block title %} Tables {% endblock title %}
+{% block content %}
+
+    <div class="header bg-gradient-primary pb-8 pt-5 pt-md-8">
+      <div class="container-fluid">
+        <div class="header-body">
+          <!-- Card stats -->
+          <div class="row">
+            <div class="col-xl-12 col-lg-12">
+              <div class="card card-stats mb-4 mb-xl-0">
+                <div class="card-body">
+
+                    <form id="patient-form" method="POST">
+                        <h6 class="heading-small text-muted mb-4">病人基本信息</h6>
+                        {% csrf_token %}
+                        <div class="pl-lg-4">
+                          <div class="row">
+                            <div class="col-lg-4">
+                              <div class="form-group">
+                                <label class="form-control-label" for="name">病人姓名:</label>
+                                {{ form.name }}
+                              </div>
+                            </div>
+                            <div class="col-lg-3">
+                              <div class="form-group">
+                                <label class="form-control-label" for="sex">病人性别</label>
+                                {{ form.sex }}
+                              </div>
+                            </div>
+                            <div class="col-lg-3">
+                                <div class="form-group">
+                                  <label class="form-control-label" for="age">年龄</label>
+                                  {{ form.age }}
+                                </div>
+                              </div>
+                          </div>
+                          <div class="row">
+
+                            <div class="col-lg-6">
+                                <div class="form-group">
+                                  <label class="form-control-label" for="input-first-name">电话号码</label>
+                                  {{ form.phone_number }}
+                                </div>
+                              </div>
+                            <div class="col-lg-6">
+                              <div class="form-group">
+                                <label class="form-control-label" for="input-last-name">地址</label>
+                                {{ form.address }}
+                              </div>
+                            </div>
+                          </div>
+                          <div class="row">
+
+                            <div class="col-lg-12">
+                                <div class="text-right">
+                                    <button type="submit" href="#!" class="btn btn-info">提交修改</button>
+                                </div>
+                            </div>
+                          </div>
+                        </div>
+                        
+                      </form>      
+
+                </div>
+                
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="container-fluid mt--7">
+        <!-- Table -->
+        <div class="row">
+          <div class="col">
+            <div class="card shadow">
+              <div class="card-header border-0">
+                <h3 class="mb-0">最近病例列表</h3>
+              </div>
+              <div class="table-responsive">
+                <table class="table align-items-center table-flush">
+                  <thead class="thead-light">
+                    <tr>
+                      <th scope="col">病因</th>
+                      <th scope="col">症状</th>
+                      <th scope="col">主治医生</th>
+                      <th scope="col">发病日期</th>
+                      <th scope="col"></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+  {% for case in cases %}
+                    <tr>
+                      <td>
+                          {{ case.sick_cause }}
+                      </td>
+                      <td>
+                        {% if case.symptom|length < 30 %}
+                          {{ case.symptom }}
+                        {% else %}
+                           点击详情查看
+                        {% endif %}
+                      </td>
+                      <td>
+                          {{ case.doctor.username }}
+                      </td>
+                      <td>
+                          {{ case.updated_at | date}}
+                      </td>
+                      <td class="text-right">
+                        <div class="dropdown">
+                          <a class="btn btn-sm btn-icon-only text-light" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i class="fas fa-ellipsis-v"></i>
+                          </a>
+                          <div class="dropdown-menu dropdown-menu-right dropdown-menu-arrow">
+                            <a class="dropdown-item" href="#">Action</a>
+                            <a class="dropdown-item" href="#">Another action</a>
+                            <a class="dropdown-item" href="#">Something else here</a>
+                          </div>
+                        </div>
+                      </td>
+                    </tr>
+  {% endfor %}
+                  </tbody>
+                </table>
+
+              </div>
+            </div>
+          </div>
+        </div>
+
+      {% include "includes/footer.html" %}
+
+    </div>
+
+{% endblock content %}
+
+<!-- Specific JS goes HERE --> 
+{% block javascripts %}
+<script>
+    let forms = document.querySelector("#patient-form").querySelectorAll("input")
+    for(let form of forms){
+        form.classList.add("form-control")
+    }
+    document.querySelector("#patient-form").querySelector("select").classList.add("form-control")
+</script>
+{% endblock javascripts %}

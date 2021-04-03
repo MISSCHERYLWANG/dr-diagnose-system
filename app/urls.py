@@ -11,6 +11,10 @@ urlpatterns = [
     # Matches any html file - to be used for gentella
     # Avoid using your .html in your resources.
     # Or create a separate django app.
+    path('patient/<int:pk>', views.PatientDetailView.as_view(), name='patient-detail'),
+    path('patients', views.PatientListView.as_view(), name='patient-list'),
+    path('patientCases', views.PatientCaseListView.as_view(), name='patientcase-list'),
+
     re_path(r'^.*\.html', views.pages, name='pages'),
 
     # The home page
