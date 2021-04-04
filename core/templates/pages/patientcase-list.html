@@ -168,7 +168,10 @@
                     <td>
                         {{ case.doctor.username }}
                     </td>
-                    <td class="text-right">
+                    <td>
+                        <a href="/patientcase/{{ case.pk }}">查看详情</a>
+                    </td>
+                    <!--<td class="text-right">
                       <div class="dropdown">
                         <a class="btn btn-sm btn-icon-only text-light" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                           <i class="fas fa-ellipsis-v"></i>
@@ -179,7 +182,7 @@
                           <a class="dropdown-item" href="#">Something else here</a>
                         </div>
                       </div>
-                    </td>
+                    </td>-->
                   </tr>
 {% endfor %}
                 </tbody>

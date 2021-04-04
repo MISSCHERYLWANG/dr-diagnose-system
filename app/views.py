@@ -11,8 +11,11 @@ from django.views.generic.list import ListView
 from django.views.generic.detail import DetailView
 from django.template import loader
 from django.http import HttpResponse
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.urls import reverse
 
-from .forms import PatientForm
+
+from .forms import PatientForm, PatientCaseForm
 
 
 @login_required(login_url="/login/")
@@ -37,7 +40,7 @@ def pages(request):
 
 
 
-class PatientListView(ListView):
+class PatientListView(LoginRequiredMixin,ListView):
     model = Patient
     paginate_by = 20
     template_name = "pages/patient-list.html"
@@ -52,13 +55,13 @@ class PatientListView(ListView):
         return super().get_queryset()
 
 
-class PatientCaseListView(ListView):
+class PatientCaseListView(LoginRequiredMixin, ListView):
     model = PatientCase
     paginate_by = 10
     template_name = "pages/patientcase-list.html"
 
 
-class PatientDetailView(DetailView):
+class PatientDetailView(LoginRequiredMixin, DetailView):
     model = Patient
     template_name = "pages/patient.html"
 
@@ -67,6 +70,7 @@ class PatientDetailView(DetailView):
         ctx = super().get_context_data(**kwargs)
         cases = kwargs['object'].patientcase_set.order_by('-id').all()[:5]
         ctx['form'] = PatientForm(instance=kwargs['object'])
+        ctx['caseform'] = PatientCaseForm()
         ctx['cases'] = cases
         return ctx
 
@@ -77,3 +81,33 @@ class PatientDetailView(DetailView):
             patient.pk = kwargs['pk']
             patient.save()
         return self.get(request, *args, **kwargs)
+
+class PatientCaseDetailView(LoginRequiredMixin, DetailView):
+    model = PatientCase
+    template_name = "pages/patientcase.html"
+
+    def get_context_data(self, **kwargs):        
+        ctx = super().get_context_data(**kwargs)
+        ctx['form'] = PatientCaseForm(instance=kwargs['object'])
+        ctx['patient'] = kwargs['object'].patient
+        return ctx
+
+    def post(self, request, *args, **kwargs):
+        form = PatientCaseForm(request.POST)
+        if form.is_valid():
+            patientcase = PatientCase.objects.get(pk=kwargs['pk'])
+            patientcase.sick_cause = form.data['sick_cause']
+            patientcase.symptom = form.data['symptom']
+            patientcase.save()
+        return self.get(request, *args, **kwargs)
+
+@login_required(login_url="/login/")
+def add_patient_case(request, *args, **kwargs):
+    form = PatientCaseForm(request.POST)
+    if form.is_valid():
+        patient = Patient.objects.get(pk=kwargs['pk'])
+        patient_case = form.save(commit=False)
+        patient_case.patient = patient
+        patient_case.doctor = request.user
+        patient_case.save()
+    return redirect(reverse('patient-detail', kwargs=kwargs) )
