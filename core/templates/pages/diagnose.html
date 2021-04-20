@@ -13,34 +13,16 @@
               <div class="card card-stats mb-4 mb-xl-0">
                 <div class="card-body">
 
-                    <form id="patientcase-form" method="POST">
+                    <form id="patientcase-form" method="POST" enctype="multipart/form-data">
                         {% csrf_token %}
-                        <div class="pl-lg-4">
-                            <div class="row">
-                              <div class="col-lg-2">
-                                <div class="form-group">
-                                  {{ patient.name }}
-                                  <label class="form-control-label" for="name">的病例详情</label>
-                                </div>
-                              </div>
-                            </div>
-                        </div>
                         <div class="pl-lg-4">
                           <div class="row">
                             <div class="col-lg-3">
                               <div class="form-group">
-                                <label class="form-control-label" for="sick_cause">病因</label>
-                                {{ form.sick_cause }}
+                                <label class="form-control-label" for="file">检测图片</label>
+                                {{ form.file }}
                               </div>
-                            </div>              
-                          </div>
-                          <div class="row">
-                            <div class="col-lg-4">
-                                <div class="form-group">
-                                    <label class="form-control-label" for="symptom">具体表现</label>
-                                    {{ form.symptom }}
-                                </div>
-                              </div>
+                            </div>
                           </div>
                           <div class="row">
 
@@ -51,11 +33,18 @@
                             </div>
                           </div>
                         </div>
-                        
-                      </form>      
+
+                      </form>
+
+                    {% if check_result %}
+                    <div>
+                        <p>检查结果</p>
+                        <p>{{ check_result }}</p>
+                    </div>
+                    {% endif %}
 
                 </div>
-                
+
               </div>
             </div>
 
@@ -69,7 +58,7 @@
 
 {% endblock content %}
 
-<!-- Specific JS goes HERE --> 
+<!-- Specific JS goes HERE -->
 {% block javascripts %}
 <script>
     let forms = document.querySelector("#patientcase-form").querySelectorAll("input")

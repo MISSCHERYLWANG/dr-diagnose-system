@@ -13,9 +13,11 @@ urlpatterns = [
     # Or create a separate django app.
     path('patient/<int:pk>', views.PatientDetailView.as_view(), name='patient-detail'),
     path('patients', views.PatientListView.as_view(), name='patient-list'),
+    path('patient/add', views.add_patient, name='add-patient'),
     path('patient/<int:pk>/case', views.add_patient_case, name='add-patient-case'),
     path('patientcase/<int:pk>', views.PatientCaseDetailView.as_view(), name='patientcase-detail'),
     path('patientCases', views.PatientCaseListView.as_view(), name='patientcase-list'),
+    path('diagnose', views.diagnose, name='diagnose'),
 
     re_path(r'^.*\.html', views.pages, name='pages'),
 

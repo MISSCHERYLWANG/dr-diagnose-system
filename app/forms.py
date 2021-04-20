@@ -2,6 +2,7 @@ from django import forms
 
 from .models import Patient, PatientCase
 
+
 class PatientForm(forms.ModelForm):
     class Meta:
         model = Patient
@@ -12,3 +13,7 @@ class PatientCaseForm(forms.ModelForm):
     class Meta:
         model = PatientCase
         fields = ['sick_cause', 'symptom']
+
+
+class UploadDiagnoseFileForm(forms.Form):
+    file = forms.ImageField()
