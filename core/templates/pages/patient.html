@@ -84,9 +84,52 @@
             </div>
             <div class="col-lg-4 text-right ">
               <button class="btn btn-sm btn-warning" data-toggle="modal" data-target="#exampleModalLong">新增病历</button>
+              <button class="btn btn-sm btn-warning" data-toggle="modal" data-target="#diagnoseModal">新增检测</button>
             </div>
           </div>
         </div>
+        <div class="table-responsive">
+          <table class="table align-items-center table-flush">
+            <thead class="thead-light">
+              <tr>
+                <th scope="col">id</th>
+                <th scope="col">眼底图片</th>
+                <th scope="col">检测结果</th>
+                <th scope="col">检测日期</th>
+                <th scope="col"></th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for fund in fundus %}
+              <tr>
+                <td>
+                  {{ fund.id }}
+                </td>
+                <td>
+                </td>
+                <td>
+                  {{ fund.image_result }}
+                </td>
+                <td>
+                  {{ fund.updated_at | date}}
+                </td>
+                <td class="text-right">
+                  <div class="dropdown">
+                    <a class="btn btn-sm btn-icon-only text-light" href="#" role="button" data-toggle="dropdown"
+                      aria-haspopup="true" aria-expanded="false">
+                      <i class="fas fa-ellipsis-v"></i>
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-right dropdown-menu-arrow">
+                      <a class="dropdown-item" href="/patientcase/{{ case.pk }}">查看详情</a>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+
         <div class="table-responsive">
           <table class="table align-items-center table-flush">
             <thead class="thead-light">
@@ -140,6 +183,39 @@
 
   {% include "includes/footer.html" %}
 
+</div>
+
+<div class="modal fade" id="diagnoseModal" tabindex="-1" role="dialog" aria-labelledby="diagnoseModalTitle"
+  aria-hidden="true">
+  <div class="modal-dialog" role="document">
+
+    <form action="/patient/{{ patient.pk }}/diagnose" id="patientcase-form" method="POST" enctype="multipart/form-data">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLongTitle">检测</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          {% csrf_token %}
+          <div class="row">
+            <div class="col-lg-3">
+              <div class="form-group">
+                <label class="form-control-label" for="file">检测图片</label>
+                {{ diagnoseform.file }}
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">关闭</button>
+          <button type="submit" class="btn btn-primary">保存更改</button>
+        </div>
+      </div>
+    </form>
+
+  </div>
 </div>
 
 

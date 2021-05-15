@@ -32,6 +32,18 @@ class Patient(models.Model):
         return self.name
 
 
+class PatientFundusImage(models.Model):
+    image_content = models.BinaryField(verbose_name="图片信息")
+    image_result = models.TextField(verbose_name="图片检查结果")
+    patient = models.ForeignKey(Patient, verbose_name="病人", on_delete=models.CASCADE)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return "{}: {}".format(self.patient.name, self.image_result)
+
+
 class PatientCase(models.Model):
     patient = models.ForeignKey(Patient, verbose_name="病人", on_delete=models.CASCADE)
     doctor = models.ForeignKey(User, verbose_name="看病医生", on_delete=models.CASCADE)

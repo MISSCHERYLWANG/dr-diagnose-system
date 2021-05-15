@@ -3,6 +3,7 @@
 License: MIT
 Copyright (c) 2019 - present AppSeed.us
 """
+import io
 import tempfile
 
 from django.contrib.auth.models import User
@@ -15,7 +16,7 @@ from django.http import HttpResponse
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse
 
-from app.models import Patient, PatientCase, ExtendUserInfo
+from app.models import Patient, PatientCase, ExtendUserInfo, PatientFundusImage
 from app.forms import PatientForm, PatientCaseForm, UploadDiagnoseFileForm, UserForm
 
 
@@ -72,9 +73,12 @@ class PatientDetailView(LoginRequiredMixin, DetailView):
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
         cases = kwargs['object'].patientcase_set.order_by('-id').all()[:5]
+        fundus = kwargs['object'].patientfundusimage_set.order_by('-id').all()[:5]
         ctx['form'] = PatientForm(instance=kwargs['object'])
         ctx['caseform'] = PatientCaseForm()
+        ctx['diagnoseform'] = UploadDiagnoseFileForm()
         ctx['cases'] = cases
+        ctx['fundus'] = fundus
         return ctx
 
     def post(self, request, *args, **kwargs):
@@ -145,9 +149,27 @@ def diagnose(request, *args, **kwargs):
                 result = handle_image_file(f.name)
             # 如果可以直接用内存中的图片作为调用参数，可以直接拿request.FILES['file']
             return render(request, template_name="pages/diagnose.html", context={'form': form, 'check_result': result})
-    else:
-        form = UploadDiagnoseFileForm()
     return render(request, template_name="pages/diagnose.html", context={'form': form})
+
+@login_required(login_url="/login/")
+def patient_diagnose(request, *args, **kwargs):
+    if request.method == 'POST':
+        patient = Patient.objects.get(pk=kwargs['pk'])
+        form = UploadDiagnoseFileForm(request.POST, request.FILES)
+        result = "暂无结果"
+        if form.is_valid():
+            # 如果模型需要保存到文件才能调用
+            img_byte_arr = io.BytesIO()
+            with tempfile.NamedTemporaryFile(mode='wb', delete=False) as f:
+                for chunk in request.FILES['file']:
+                    f.write(chunk)
+                    img_byte_arr.write(chunk)
+                result = handle_image_file(f.name)
+
+                fundus = PatientFundusImage.objects.create(image_content=img_byte_arr.getvalue(), patient=patient, image_result=result)
+
+            # 如果可以直接用内存中的图片作为调用参数，可以直接拿request.FILES['file']
+    return redirect(reverse('patient-detail', kwargs=kwargs))
 
 
 @login_required(login_url="/login/")

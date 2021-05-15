@@ -20,11 +20,21 @@ class PatientForm(forms.ModelForm):
         model = Patient
         fields = ['name', 'sex', 'age', 'phone_number', 'address']
 
+    def __init__(self, *args, **kwargs):
+        super(PatientForm, self).__init__(*args, **kwargs)
+        for field_key, field in self.fields.items():
+            field.widget.attrs.update({'class': 'form-control'})
+
 
 class PatientCaseForm(forms.ModelForm):
     class Meta:
         model = PatientCase
         fields = ['sick_cause', 'symptom']
+
+    def __init__(self, *args, **kwargs):
+        super(PatientCaseForm, self).__init__(*args, **kwargs)
+        for field_key, field in self.fields.items():
+            field.widget.attrs.update({'class': 'form-control'})
 
 
 class UploadDiagnoseFileForm(forms.Form):
