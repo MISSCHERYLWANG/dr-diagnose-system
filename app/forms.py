@@ -1,14 +1,19 @@
 from django import forms
 from django.contrib.auth.models import User
+from django.forms.widgets import Textarea
 from .models import Patient, PatientCase
 
 
 class UserForm(forms.ModelForm):
+    introduction = forms.CharField(widget=Textarea)
     class Meta:
         model = User
-        fields = ['username', 'password', 'email', 'first_name', 'last_name',
-                  'last_login', 'date_joined', 'is_superuser', 'is_active', 'is_staff']
+        fields = ['email', 'first_name', 'last_name']
 
+    def __init__(self, *args, **kwargs):
+        super(UserForm, self).__init__(*args, **kwargs)
+        for field_key, field in self.fields.items():
+            field.widget.attrs.update({'class': 'form-control'})
 
 class PatientForm(forms.ModelForm):
     class Meta:

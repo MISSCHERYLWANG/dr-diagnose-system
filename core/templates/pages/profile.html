@@ -5,7 +5,7 @@
 {% block content %}
 
     <!-- Header -->
-    <div class="header pb-8 pt-5 pt-lg-8 d-flex align-items-center" 
+    <div class="header pb-8 pt-5 pt-lg-8 d-flex align-items-center"
          style="min-height: 600px; background-size: cover; background-position: center top;">
       <!-- Mask -->
       <span class="mask bg-gradient-default opacity-8"></span>
@@ -64,9 +64,6 @@
                 <div class="col-8">
                   <h3 class="mb-0">我的账号</h3>
                 </div>
-                <!--<div class="col-4 text-right">
-                  <button href="#!" class="btn btn-sm btn-primary">提交修改</button>
-                </div>-->
               </div>
             </div>
             <div class="card-body">
@@ -76,17 +73,13 @@
                   <div class="row">
                     <div class="col-lg-6">
                       <div class="form-group">
-                        <label class="form-control-label" for="input-username">用户名</label>
-                        <!--<input type="text" id="input-username" class="form-control form-control-alternative" placeholder="Username"
-                               value="">-->
-                          {{ user_form.username }}
+                        <label class="form-control-label">用户名: {{ request.user.username }}</label>
                       </div>
                     </div>
                     <div class="col-lg-6">
                       <div class="form-group">
                         <label class="form-control-label" for="input-email">电子邮箱</label>
-                        <input type="email" id="input-email" class="form-control form-control-alternative"
-                               value="{{ request.user.email }}">
+                        {{ user_form.email }}
                       </div>
                     </div>
                   </div>
@@ -94,60 +87,24 @@
                     <div class="col-lg-6">
                       <div class="form-group">
                         <label class="form-control-label" for="last-name">姓</label>
-                        <input type="text" id="input-username" class="form-control form-control-alternative"
-                               value="{{ request.user.last_name }}">
+                        {{ user_form.last_name }}
 
                       </div>
                     </div>
                     <div class="col-lg-6">
                       <div class="form-group">
                         <label class="form-control-label" for="first-name">名</label>
-                        <input type="email" id="input-email" class="form-control form-control-alternative"
-                               value="{{ request.user.first_name }}">
+                        {{ user_form.first_name }}
                       </div>
                     </div>
                   </div>
                 </div>
-                <!--<hr class="my-4" />
 
-                <h6 class="heading-small text-muted mb-4">详细信息</h6>
-                <div class="pl-lg-4">
-                  <div class="row">
-                    <div class="col-md-12">
-                      <div class="form-group">
-                        <label class="form-control-label" for="input-address">家庭住址</label>
-                        <input id="input-address" class="form-control form-control-alternative" >
-                      </div>
-                    </div>
-                  </div>
-                  <div class="row">
-                    <div class="col-lg-4">
-                      <div class="form-group">
-                        <label class="form-control-label" for="input-city">市</label>
-                        <input type="text" id="input-city" class="form-control form-control-alternative" placeholder="城市">
-                      </div>
-                    </div>
-                    <div class="col-lg-4">
-                      <div class="form-group">
-                        <label class="form-control-label" for="input-country">区县</label>
-                        <input type="text" id="input-country" class="form-control form-control-alternative" placeholder="区域">
-                      </div>
-                    </div>
-                    <div class="col-lg-4">
-                      <div class="form-group">
-                        <label class="form-control-label" for="input-country">街道</label>
-                        <input type="number" id="input-postal-code" class="form-control form-control-alternative" placeholder="街道">
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <hr class="my-4" />-->
-                <!-- Description -->
                 <h6 class="heading-small text-muted mb-4">关于我</h6>
                 <div class="pl-lg-4">
                   <div class="form-group">
                     <label>个人简介</label>
-                    <textarea rows="4" class="form-control form-control-alternative" placeholder="自我介绍">本人为眼科医生，从业5年。</textarea>
+                    {{ user_form.introduction }}
                   </div>
                 </div>
                 <div class="row">
@@ -169,5 +126,5 @@
 
 {% endblock content %}
 
-<!-- Specific JS goes HERE --> 
+<!-- Specific JS goes HERE -->
 {% block javascripts %}{% endblock javascripts %}

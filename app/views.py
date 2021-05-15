@@ -6,7 +6,6 @@ Copyright (c) 2019 - present AppSeed.us
 import tempfile
 
 from django.contrib.auth.models import User
-from app.models import Patient, PatientCase
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views.generic.list import ListView
@@ -16,7 +15,8 @@ from django.http import HttpResponse
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse
 
-from .forms import PatientForm, PatientCaseForm, UploadDiagnoseFileForm, UserForm
+from app.models import Patient, PatientCase, ExtendUserInfo
+from app.forms import PatientForm, PatientCaseForm, UploadDiagnoseFileForm, UserForm
 
 
 @login_required(login_url="/login/")
@@ -139,11 +139,10 @@ def diagnose(request, *args, **kwargs):
         if form.is_valid():
             UploadDiagnoseFileForm(request.FILES['file'])
             # 如果模型需要保存到文件才能调用
-            with tempfile.TemporaryFile(mode='wb') as f:
+            with tempfile.NamedTemporaryFile(mode='wb', delete=False) as f:
                 for chunk in request.FILES['file']:
                     f.write(chunk)
-                print("write file to ", f)
-                result = handle_image_file(f)
+                result = handle_image_file(f.name)
             # 如果可以直接用内存中的图片作为调用参数，可以直接拿request.FILES['file']
             return render(request, template_name="pages/diagnose.html", context={'form': form, 'check_result': result})
     else:
@@ -153,18 +152,24 @@ def diagnose(request, *args, **kwargs):
 
 @login_required(login_url="/login/")
 def profile_update(request):
-    user = User.objects.get(user=request.user)
+    user = request.user
+
+    try:
+        extend_user_info = ExtendUserInfo.objects.get(user__pk=user.pk)
+    except ExtendUserInfo.DoesNotExist:
+        extend_user_info = ExtendUserInfo.objects.create(user=user, age=1, introduction="")
 
     if request.method == "POST":
         user_form = UserForm(request.POST)
         if user_form.is_valid():
-            user_cd = user_form.cleaned_data
-            user.username = user_cd['username']
-            user.email = user_cd['email']
-            user.first_name = user_cd['first_name']
-            user.last_name = user_cd['last_name']
+            user.email = user_form.data['email']
+            user.first_name = user_form.data['first_name']
+            user.last_name = user_form.data['last_name']
             user.save()
-        return redirect('/profile/')
+            extend_user_info.introduction = user_form.data['introduction']
+            extend_user_info.save()
+        return redirect('/profile')
     else:
-        user_form = UserForm(instance=request.user)
+        user_form = UserForm(initial={'username': user.username, 'email': user.email,
+                             'first_name': user.first_name, 'last_name': user.last_name, 'introduction': extend_user_info.introduction})
         return render(request, template_name='pages/profile.html', context={"user_form": user_form})
