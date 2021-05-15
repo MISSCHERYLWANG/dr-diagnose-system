@@ -1,6 +1,13 @@
 from django import forms
-
+from django.contrib.auth.models import User
 from .models import Patient, PatientCase
+
+
+class UserForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ['username', 'password', 'email', 'first_name', 'last_name',
+                  'last_login', 'date_joined', 'is_superuser', 'is_active', 'is_staff']
 
 
 class PatientForm(forms.ModelForm):

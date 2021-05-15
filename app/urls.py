@@ -18,6 +18,7 @@ urlpatterns = [
     path('patientcase/<int:pk>', views.PatientCaseDetailView.as_view(), name='patientcase-detail'),
     path('patientCases', views.PatientCaseListView.as_view(), name='patientcase-list'),
     path('diagnose', views.diagnose, name='diagnose'),
+    path('profile', views.profile_update, name="edit_profile"),
 
     re_path(r'^.*\.html', views.pages, name='pages'),
 

@@ -5,6 +5,7 @@ Copyright (c) 2019 - present AppSeed.us
 """
 import tempfile
 
+from django.contrib.auth.models import User
 from app.models import Patient, PatientCase
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, get_object_or_404, redirect
@@ -15,7 +16,7 @@ from django.http import HttpResponse
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse
 
-from .forms import PatientForm, PatientCaseForm, UploadDiagnoseFileForm
+from .forms import PatientForm, PatientCaseForm, UploadDiagnoseFileForm, UserForm
 
 
 @login_required(login_url="/login/")
@@ -33,9 +34,7 @@ def pages(request):
         load_template = request.path.split('/')[-1]
         template = loader.get_template('pages/' + load_template)
         return HttpResponse(template.render(context, request))
-
     except:
-
         template = loader.get_template('pages/error-404.html')
         return HttpResponse(template.render(context, request))
 
@@ -150,3 +149,22 @@ def diagnose(request, *args, **kwargs):
     else:
         form = UploadDiagnoseFileForm()
     return render(request, template_name="pages/diagnose.html", context={'form': form})
+
+
+@login_required(login_url="/login/")
+def profile_update(request):
+    user = User.objects.get(user=request.user)
+
+    if request.method == "POST":
+        user_form = UserForm(request.POST)
+        if user_form.is_valid():
+            user_cd = user_form.cleaned_data
+            user.username = user_cd['username']
+            user.email = user_cd['email']
+            user.first_name = user_cd['first_name']
+            user.last_name = user_cd['last_name']
+            user.save()
+        return redirect('/profile/')
+    else:
+        user_form = UserForm(instance=request.user)
+        return render(request, template_name='pages/profile.html', context={"user_form": user_form})
