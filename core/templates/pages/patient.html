@@ -80,11 +80,11 @@
         <div class="card-header border-0">
           <div class="row">
             <div class="col-lg-8">
-              <h3 class="mb-0">最近病历列表</h3>
+              <h3 class="mb-0">病人最近检测结果</h3>
             </div>
             <div class="col-lg-4 text-right ">
-              <button class="btn btn-sm btn-warning" data-toggle="modal" data-target="#exampleModalLong">新增病历</button>
-              <button class="btn btn-sm btn-warning" data-toggle="modal" data-target="#diagnoseModal">新增检测</button>
+              <button class="btn btn-sm btn-warning" data-toggle="modal" data-target="#examplemodallong">新增病历</button>
+              <button class="btn btn-sm btn-warning" data-toggle="modal" data-target="#diagnosemodal">新增检测</button>
             </div>
           </div>
         </div>
@@ -106,6 +106,7 @@
                   {{ fund.id }}
                 </td>
                 <td>
+                  <img style="width: 150px; height:150px;" src="/diagnose_image/{{ fund.pk }}"/>
                 </td>
                 <td>
                   {{ fund.image_result }}
@@ -128,6 +129,20 @@
               {% endfor %}
             </tbody>
           </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col">
+      <div class="card shadow">
+        <div class="card-header border-0">
+          <div class="row">
+            <div class="col-lg-8">
+              <h3 class="mb-0">最近病历列表</h3>
+            </div>
+          </div>
         </div>
 
         <div class="table-responsive">
@@ -180,6 +195,7 @@
       </div>
     </div>
   </div>
+
 
   {% include "includes/footer.html" %}
 

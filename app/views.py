@@ -15,6 +15,7 @@ from django.template import loader
 from django.http import HttpResponse
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse
+from PIL import Image
 
 from app.models import Patient, PatientCase, ExtendUserInfo, PatientFundusImage
 from app.forms import PatientForm, PatientCaseForm, UploadDiagnoseFileForm, UserForm
@@ -128,6 +129,15 @@ def add_patient(request, *args, **kwargs):
     if form.is_valid():
         patient = form.save()
     return redirect(reverse('patient-list'))
+
+
+@login_required(login_url="/login/")
+def diagnose_image(request, *args, **kwargs):
+    fundus_image = PatientFundusImage.objects.get(pk=kwargs['pk'])
+    img = Image.open(io.BytesIO(fundus_image.image_content))
+    response = HttpResponse(content_type='image/png')
+    img.save(response, "PNG")
+    return response
 
 
 # 如果是文件

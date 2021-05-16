@@ -16,6 +16,7 @@ urlpatterns = [
     path('patient/add', views.add_patient, name='add-patient'),
     path('patient/<int:pk>/case', views.add_patient_case, name='add-patient-case'),
     path('patient/<int:pk>/diagnose', views.patient_diagnose, name='add-patient-case'),
+    path('diagnose_image/<int:pk>', views.diagnose_image, name='diagnose_image'),
     path('patientcase/<int:pk>', views.PatientCaseDetailView.as_view(), name='patientcase-detail'),
     path('patientCases', views.PatientCaseListView.as_view(), name='patientcase-list'),
     path('diagnose', views.diagnose, name='diagnose'),
