@@ -67,6 +67,12 @@ class PatientCaseListView(LoginRequiredMixin, ListView):
     template_name = "pages/patientcase-list.html"
 
 
+class ImageListView(LoginRequiredMixin, ListView):
+    model = PatientFundusImage
+    paginate_by = 10
+    template_name = "pages/image-list.html"
+
+
 class PatientDetailView(LoginRequiredMixin, DetailView):
     model = Patient
     template_name = "pages/patient.html"
@@ -111,6 +117,26 @@ class PatientCaseDetailView(LoginRequiredMixin, DetailView):
         return self.get(request, *args, **kwargs)
 
 
+class ImageDetailView(LoginRequiredMixin, DetailView):
+    model = PatientFundusImage
+    template_name = "pages/image.html"
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        ctx['form'] = UploadDiagnoseFileForm()
+        ctx['patient'] = kwargs['object'].patient
+        return ctx
+
+    def post(self, request, *args, **kwargs):
+        form = UploadDiagnoseFileForm(request.POST)
+        if form.is_valid():
+            image = PatientFundusImage.objects.get(pk=kwargs['pk'])
+            image.image_content = form.data['image_content']
+            image.image_result = form.data['image_result']
+            image.save()
+        return self.get(request, *args, **kwargs)
+
+
 @login_required(login_url="/login/")
 def add_patient_case(request, *args, **kwargs):
     form = PatientCaseForm(request.POST)
@@ -142,13 +168,13 @@ def diagnose_image(request, *args, **kwargs):
 
 # 如果是文件
 def handle_image_file(path):
-    return "Success 命不久矣"
+    return "中度非增殖性糖尿病视网膜病变"
 
 
 @login_required(login_url="/login/")
 def diagnose(request, *args, **kwargs):
+    form = UploadDiagnoseFileForm(request.POST, request.FILES)
     if request.method == 'POST':
-        form = UploadDiagnoseFileForm(request.POST, request.FILES)
         result = "暂无结果"
         if form.is_valid():
             UploadDiagnoseFileForm(request.FILES['file'])
@@ -160,6 +186,7 @@ def diagnose(request, *args, **kwargs):
             # 如果可以直接用内存中的图片作为调用参数，可以直接拿request.FILES['file']
             return render(request, template_name="pages/diagnose.html", context={'form': form, 'check_result': result})
     return render(request, template_name="pages/diagnose.html", context={'form': form})
+
 
 @login_required(login_url="/login/")
 def patient_diagnose(request, *args, **kwargs):

@@ -15,6 +15,7 @@ class UserForm(forms.ModelForm):
         for field_key, field in self.fields.items():
             field.widget.attrs.update({'class': 'form-control'})
 
+
 class PatientForm(forms.ModelForm):
     class Meta:
         model = Patient

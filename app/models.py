@@ -17,6 +17,7 @@ class ExtendUserInfo(models.Model):
     age = models.IntegerField(verbose_name='年龄')
     user = models.OneToOneField(User, verbose_name="看病医生", on_delete=models.CASCADE)
 
+
 class Patient(models.Model):
     class Sex(models.TextChoices):
         MAN = 'MAN', _('男性')

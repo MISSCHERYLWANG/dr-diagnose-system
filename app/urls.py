@@ -21,6 +21,8 @@ urlpatterns = [
     path('patientCases', views.PatientCaseListView.as_view(), name='patientcase-list'),
     path('diagnose', views.diagnose, name='diagnose'),
     path('profile', views.profile_update, name="edit_profile"),
+    path('patient_images', views.ImageListView.as_view(), name='patient-images-list'),
+    path('image/<int:pk>', views.ImageDetailView.as_view(), name='patient-image-detail'),
 
     re_path(r'^.*\.html', views.pages, name='pages'),
 
