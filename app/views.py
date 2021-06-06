@@ -67,6 +67,7 @@ class PatientCaseListView(LoginRequiredMixin, ListView):
     template_name = "pages/patientcase-list.html"
 
 
+
 class ImageListView(LoginRequiredMixin, ListView):
     model = PatientFundusImage
     paginate_by = 10
@@ -123,7 +124,7 @@ class ImageDetailView(LoginRequiredMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
-        ctx['form'] = UploadDiagnoseFileForm()
+        ctx['image_result'] = kwargs['object'].image_result
         ctx['patient'] = kwargs['object'].patient
         return ctx
 
