@@ -63,8 +63,17 @@ class PatientListView(LoginRequiredMixin, ListView):
 
 class PatientCaseListView(LoginRequiredMixin, ListView):
     model = PatientCase
-    paginate_by = 10
+    paginate_by = 20
     template_name = "pages/patientcase-list.html"
+
+    def post(self, request, *args, **kwargs):
+        return self.get(request, *args, **kwargs)
+
+    def get_queryset(self):
+        if getattr(self.request, '_post', None) and self.request._post.get('search'):
+            return super().get_queryset().filter(patient__name__icontains=self.request._post.get('search'))
+
+        return super().get_queryset()
 
 
 
